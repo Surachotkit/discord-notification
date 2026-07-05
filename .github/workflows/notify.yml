@@ -1,0 +1,20 @@
+name: Bear Hunt Notify
+
+on:
+  schedule:
+    - cron: '0 13 * * *'  # 13:00 UTC = 20:00 เวลาไทย (Asia/Bangkok)
+  workflow_dispatch: {}    # ให้กดรันมือทดสอบได้จากแท็บ Actions
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: node index.js
+        env:
+          WEBHOOK_DISCORD: ${{ secrets.WEBHOOK_DISCORD }}
+          FORCE_SEND: ${{ github.event_name == 'workflow_dispatch' }}
