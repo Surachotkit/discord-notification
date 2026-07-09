@@ -1,8 +1,8 @@
 name: Bear Hunt Notify
 
 on:
-  schedule:
-    - cron: '43 12 * * *'  # 13:00 UTC = 20:00 เวลาไทย (Asia/Bangkok)
+  # schedule:
+  #   - cron: '43 12 * * *'  # 13:00 UTC = 20:00 เวลาไทย (Asia/Bangkok)
   workflow_dispatch: {}    # ให้กดรันมือทดสอบได้จากแท็บ Actions
 
 jobs:
