@@ -7,7 +7,7 @@ const START_DATE = '2026-07-03';
 const events = {
   bear: {
     webhookUrl: process.env.WEBHOOK_DISCORD_BEAR,
-    imagePath: path.join(__dirname, 'src', 'image', 'bear.png'),
+    imagePath: path.join(__dirname, 'src', 'image', 'bear', 'bear.png'),
     imageName: 'bear.png',
     content: "@everyone 🐻 BEAR HUNT is starting at 20:10 (13:10UTC) ⚔️"
   },
