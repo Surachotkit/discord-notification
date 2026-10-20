@@ -8,10 +8,12 @@
 
 | Mode | คำอธิบาย |
 | --- | --- |
-| `bear` | แจ้งเตือน BEAR HUNT รันแบบวันเว้นวัน นับจาก `START_DATE` |
+| `bear` | แจ้งเตือน BEAR HUNT event |
 | `cesares` | แจ้งเตือน CESARES FURY event |
 | `sword_land` | แจ้งเตือน SWORD LAND event |
 | `viking` | แจ้งเตือน VIKING event |
+
+แต่ละ event มี webhook URL, รูปภาพ, และข้อความของตัวเอง แก้ไขได้ตรงใน `events.js`
 
 ## การติดตั้ง
 
@@ -30,7 +32,7 @@ WEBHOOK_DISCORD_VIKING=https://discord.com/api/webhooks/...
 
 ## การใช้งาน
 
-รันแบบระบุ event ตรงๆ (ข้ามการเช็ควันเว้นวัน ส่งทันที):
+รันแบบระบุ event ตรงๆ ผ่าน npm script:
 
 ```bash
 npm run bear
@@ -39,26 +41,21 @@ npm run sword_land
 npm run viking
 ```
 
-หรือรันแบบ default โดยไม่ระบุ mode — จะส่ง `events.bear` เฉพาะวันที่ตรงกับตารางวันเว้นวัน (นับจาก `START_DATE` ใน `events.js`):
+หรือเรียก `node index.js` พร้อมชื่อ mode โดยตรง:
 
 ```bash
-node index.js
+node index.js bear
 ```
 
-บังคับให้ส่งทันทีโดยข้ามการเช็ควันเว้นวัน ด้วย `FORCE_SEND=true`:
+ถ้าไม่ระบุ mode หรือระบุ mode ที่ไม่มีใน `events.js` สคริปต์จะไม่ส่งแจ้งเตือนและพิมพ์ log แจ้งเฉยๆ
 
-```bash
-FORCE_SEND=true node index.js
-```
+ตั้ง cron/launchd ให้เรียก `npm run <mode>` ตามเวลาที่ต้องการแจ้งเตือนของแต่ละ event
 
 ## โครงสร้างโปรเจกต์
 
 ```
-index.js              จุดเริ่มต้นโปรแกรม เช็ค mode / วันเว้นวัน แล้วเรียกส่งแจ้งเตือน
-events.js              config ของแต่ละ event (webhook url, รูปภาพ, ข้อความ)
-utils/discord.js        ฟังก์ชันส่งข้อความ + รูปภาพเข้า Discord webhook
-utils/date.js           คำนวณวันเว้นวันจาก START_DATE (เวลาไทย)
-src/image/              รูปภาพประกอบของแต่ละ event
+index.js              จุดเริ่มต้นโปรแกรม อ่าน mode จาก argument แล้วเรียกส่งแจ้งเตือน
+events.js             config ของแต่ละ event (webhook url, รูปภาพ, ข้อความ)
+utils/discord.js      ฟังก์ชันส่งข้อความ + รูปภาพเข้า Discord webhook
+src/image/            รูปภาพประกอบของแต่ละ event
 ```
-
-
