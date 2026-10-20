@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "bear": "node index.js bear",
     "cesares": "node index.js cesares",
-    "sword_land": "node index.js sword_land"
+    "sword_land": "node index.js sword_land",
+    "viking": "node index.js viking"
   },
   "keywords": [],
   "author": "",
