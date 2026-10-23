@@ -9,6 +9,27 @@ const GIFTCODE_WEBHOOK = process.env.WEBHOOK_DISCORD_GIFTCODE;
 // หน่วงเวลา (Delay) เพื่อป้องกันการยิงรัวจนโดนบล็อก
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+// รวมผลลัพธ์ทุกไอดีเป็นข้อความสรุปข้อความเดียว สำหรับแจ้งเตือน Discord
+function buildSummary(code, results) {
+  const success = results.filter(r => r.success);
+  const failed = results.filter(r => !r.success);
+  const line = (r) => `- ID: ${r.playerId}, ${r.name}, K${r.kid} -> ${r.message}`;
+
+  return [
+    `🎁 Gift-code: "${code}"`,
+    '---------------------------------------------',
+    `✨ Total: ${results.length}`,
+    `✅ Success: ${success.length}`,
+    `❌ Failed: ${failed.length}`,
+    '---------------------------------------------',
+    `✅ Success (${success.length})`,
+    ...success.map(line),
+    '---------------------------------------------',
+    `❌ Failed (${failed.length})`,
+    ...failed.map(line),
+  ].join('\n');
+}
+
 async function redeemGiftCodeForAllPlayers() {
   // แสดง prompt แล้ว "รอ" ให้ผู้ใช้พิมพ์ทาง terminal — พอ Enter จะเรียก callback พร้อมค่าที่พิมพ์เป็น code
   const rl = readline.createInterface({
@@ -51,17 +72,12 @@ async function redeemGiftCodeForAllPlayers() {
 
       console.log(`\n🚀 เริ่มส่งโค้ด "${code}" ให้ทั้งหมด ${players.length} ไอดี...\n`);
 
-      // วนลูปส่งข้อมูลทีละไอดี
+      // วนลูปส่งข้อมูลทีละไอดี เก็บผลลัพธ์ไว้สรุปทีเดียวตอนจบ
+      const results = [];
       for (let i = 0; i < players.length; i++) {
         const { fid, kid, name } = players[i];
         const result = await redeemCode(fid, kid, name, code);
-
-        if (GIFTCODE_WEBHOOK) {
-          const text = result.success
-            ? `✅ (ID: ${result.playerId}, NAME: ${result.name}, K${kid}) แลกโค้ด "${code}" ✅ -> ${result.message}`
-            : `❌ (ID: ${result.playerId}, NAME: ${result.name}, K${kid}) แลกโค้ด "${code}" ❌ -> ${result.message}`;
-          await sendGiftCodeNotification(GIFTCODE_WEBHOOK, text);
-        }
+        results.push({ ...result, kid });
 
         // หน่วงเวลา 3 วินาทีก่อนไปไอดีถัดไป (ปรับเพิ่ม/ลดได้ตามต้องการ)
         if (i < players.length - 1) {
@@ -70,6 +86,10 @@ async function redeemGiftCodeForAllPlayers() {
       }
 
       console.log('\n✨ ทำรายการครบทุกไอดีเรียบร้อยแล้ว!');
+
+      if (GIFTCODE_WEBHOOK) {
+        await sendGiftCodeNotification(GIFTCODE_WEBHOOK, buildSummary(code, results));
+      }
     } catch (err) {
       console.error('⚠️ เกิดข้อผิดพลาดในการอ่านไฟล์:', err.message);
     }
