@@ -25,4 +25,20 @@ async function sendDiscordNotification({ webhookUrl, imagePath, imageName, conte
   }
 }
 
-module.exports = { sendDiscordNotification };
+async function sendGiftCodeNotification(webhookUrl, content) {
+  try {
+    const res = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content })
+    });
+
+    if (!res.ok) {
+      console.error(`ส่งแจ้งเตือน Discord ไม่สำเร็จ: ${res.status} ${res.statusText}`);
+    }
+  } catch (err) {
+    console.error("เกิดข้อผิดพลาดตอนส่งแจ้งเตือน Discord:", err);
+  }
+}
+
+module.exports = { sendDiscordNotification, sendGiftCodeNotification };

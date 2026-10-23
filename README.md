@@ -51,11 +51,32 @@ node index.js bear
 
 ตั้ง cron/launchd ให้เรียก `npm run <mode>` ตามเวลาที่ต้องการแจ้งเตือนของแต่ละ event
 
+## แลก Gift Code (KingShot)
+
+`redeem.js` ใช้สำหรับยิงแลก Gift Code ของเกม KingShot ให้กับ Player ID หลายคนพร้อมกัน
+
+สร้างไฟล์ `users.txt` ที่ root ของโปรเจกต์ ใส่ `playerId,kingdomId,characterName` ทีละบรรทัด (แต่ละคนอยู่คนละ kingdom ได้, ชื่อตัวละครใส่ไว้เพื่อให้อ่านผลลัพธ์ง่ายขึ้น ถ้าไม่ใส่จะใช้ playerId แทน):
+
+```
+987654321,512,JohnDoe
+```
+
+รันคำสั่ง:
+
+```bash
+npm run redeem
+```
+
+โปรแกรมจะถามโค้ดที่ต้องการแลก แล้ววนส่งคำขอแลกโค้ดให้ทุก Player ID ใน `users.txt` ทีละคน (หน่วงเวลา 3 วินาทีต่อคน เพื่อลดโอกาสโดนบล็อก) และแจ้งผลลัพธ์ (สำเร็จ/ไม่สำเร็จ) เข้า Discord ผ่าน `WEBHOOK_DISCORD_GIFTCODE` ทุกครั้ง
+
 ## โครงสร้างโปรเจกต์
 
 ```
 index.js              จุดเริ่มต้นโปรแกรม อ่าน mode จาก argument แล้วเรียกส่งแจ้งเตือน
+redeem.js             จุดเริ่มต้นโปรแกรมแลก Gift Code ให้ Player ID ทุกคนใน users.txt
 events.js             config ของแต่ละ event (webhook url, รูปภาพ, ข้อความ)
 utils/discord.js      ฟังก์ชันส่งข้อความ + รูปภาพเข้า Discord webhook
+utils/giftcode.js     ฟังก์ชันยิงแลก Gift Code ไปที่ API ของ KingShot
 src/image/            รูปภาพประกอบของแต่ละ event
+users.txt             รายชื่อ Player ID สำหรับแลก Gift Code (ไม่ commit เข้า git)
 ```
