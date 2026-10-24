@@ -41,7 +41,7 @@ async function redeemCode(playerId, kingdomId, name, code) {
     time: String(Math.floor(Date.now() / 1000)),
   };
   payload.sign = sign(payload);
-  const label = `(ID: ${playerId}, NAME: ${name}, K${kingdomId})`;
+  const label = `(ID: ${playerId}, ${name}, K${kingdomId})`;
 
   try {
     const response = await fetch(REDEEM_URL, {
